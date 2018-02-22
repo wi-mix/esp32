@@ -1,8 +1,14 @@
+-- Queue.lua
+--
+-- q = Queue.new()
+-- q:append(value)
+-- value = q:pop()
+
 Queue = {}
 function Queue.new()
-	local queue = {first = 0, last = -1}
-	setmetatable(queue, {__index = Queue})
-	return queue
+	local _queue = {first = 0, last = -1}
+	setmetatable(_queue, {__index = Queue})
+	return _queue
 end
 
 function Queue:append(value)

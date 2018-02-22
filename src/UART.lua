@@ -1,9 +1,9 @@
 -- UART.lua
 --
--- u = UART.init(<baud>, <bits>, <parity>, <stopBits>)
+-- u = UART.init(baud, bits, parity, stopBits)
 -- u:onError(function(err) ... end)
 -- u:onData(function(data) ... end)
--- u:write(<data>)
+-- u:write(data)
 
 UART = {}
 function UART.init(baud, bits, parity, stopBits)
@@ -11,13 +11,13 @@ function UART.init(baud, bits, parity, stopBits)
 	setmetatable(_uart, {__index = UART})
 
 	uart.on("data", 0, function(data)
-		if self.onDataFunc then
-			self.onDataFunc(data)
+		if _uart.onDataFunc then
+			_uart.onDataFunc(data)
 		end
 	end, 0)
 	uart.on("error", function(err)
-		if self.onErrorFunc then
-			self.onErrorFunc(err)
+		if _uart.onErrorFunc then
+			_uart.onErrorFunc(err)
 		end
 	end)
 	uart.setup(0, baud, bits, parity, stopBits, 0)

@@ -20,29 +20,29 @@ function Client.new(connection)
 	local _client = {conn = connection}
 	setmetatable(_client, {__index = Client})
 
-	self.conn:on("connection", function (socket)
-		if self.onConnectionFunc then
-			self.onConnectionFunc(self)
+	_client.conn:on("connection", function (socket)
+		if _client.onConnectionFunc then
+			_client.onConnectionFunc(_client)
 		end
 	end)
-	self.conn:on("reconnection", function (socket, err)
-		if self.onReconnectionFunc then
-			self.onReconnectionFunc(self, err)
+	_client.conn:on("reconnection", function (socket, err)
+		if _client.onReconnectionFunc then
+			_client.onReconnectionFunc(_client, err)
 		end
 	end)
-	self.conn:on("disconnection", function (socket, err)
-		if self.onDisconnectionFunc then
-			self.onDisconnectionFunc(self, err)
+	_client.conn:on("disconnection", function (socket, err)
+		if _client.onDisconnectionFunc then
+			_client.onDisconnectionFunc(_client, err)
 		end
 	end)
-	self.conn:on("receive", function (socket, data)
-		if self.onReceiveFunc then
-			self.onReceiveFunc(self, data)
+	_client.conn:on("receive", function (socket, data)
+		if _client.onReceiveFunc then
+			_client.onReceiveFunc(_client, data)
 		end
 	end)
-	self.conn:on("sent", function (socket)
-		if self.onSentFunc then
-			self.onSentFunc(self)
+	_client.conn:on("sent", function (socket)
+		if _client.onSentFunc then
+			_client.onSentFunc(_client)
 		end
 	end)
 
