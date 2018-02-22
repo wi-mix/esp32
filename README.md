@@ -19,6 +19,10 @@ make flash
 sudo cu -s 115200 -l /dev/tty.SLAB_USBtoUART
 ```
 
+## Code
+
+[https://nodemcu.readthedocs.io/en/dev-esp32/](https://nodemcu.readthedocs.io/en/dev-esp32/)
+
 ## Upload Code
 
 [http://chilipeppr.com/esp32](http://chilipeppr.com/esp32)
