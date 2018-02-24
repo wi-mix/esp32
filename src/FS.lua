@@ -3,6 +3,7 @@
 --
 -- FS.forEachFile("lua", function(name) print(name) end)
 -- FS.deleteAll()
+-- FS.cleanup()
 
 FS = {}
 function FS.forEachFile(extension, callback)
@@ -19,6 +20,12 @@ function FS.deleteAll()
   for name, _ in pairs(files) do
     file.remove(name)
   end
+end
+
+function FS.cleanup()
+  FS.forEachFile(".lua", function(name)
+    file.remove(name)
+  end)
 end
 
 function stringHasSuffix(self, suffix)
