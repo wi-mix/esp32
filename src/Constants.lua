@@ -3,7 +3,9 @@
 --
 -- CONST.ssid
 -- CONST.pass
+-- CONST.port
 
 CONST = {}
 CONST.ssid = ""
 CONST.pass = ""
+CONST.port = 80
