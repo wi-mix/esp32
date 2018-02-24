@@ -25,6 +25,8 @@ sudo cu -s 115200 -l /dev/tty.SLAB_USBtoUART
 
 ## Upload Code
 
+### Before uploading don't forget to set the Constants.lua values
+
 [http://chilipeppr.com/esp32](http://chilipeppr.com/esp32)
 
 ```
