@@ -24,8 +24,10 @@ end
 
 function FS.cleanup()
   FS.forEachFile(".lua", function(name)
+    if name == "init.lua" then return end
     file.remove(name)
   end)
+  file.remove("init.lc")
 end
 
 function stringHasSuffix(self, suffix)
