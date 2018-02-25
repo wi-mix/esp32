@@ -6,21 +6,27 @@
 -- load all modules
 dofile("FS.lc")
 FS.forEachFile(".lc", function(name)
-  if not (name == "FS.lc" or name == "Main.lc") then
-    dofile(name)
-  end
+  if name == "init.lc" then return end
+  if name == "FS.lc"   then return end
+  if name == "Main.lc" then return end
+  dofile(name)
 end)
+
+LED.init()
+LED.off()
 
 wireless = Wifi.init()
 server = nil
 wireless:onDisconnect(function(ssid, bssid, reason)
-  print("-- Wifi disconnected")
+  LED.blink(100)
+  print("-- Wifi disconnected: " .. reason)
   if s then
     s:close()
     s = nil
   end
 end)
 wireless:onGetIp(function(ip, netmask, gw)
+  LED.on()
   print("-- Wifi got ip " .. ip .. ", mask: " .. netmask .. ", gateway: " .. gw)
   if server then
     server:close()
@@ -39,5 +45,6 @@ wireless:onGetIp(function(ip, netmask, gw)
     local port, ip = client:peerAddress()
     print("-- Client connected from " .. ip .. ":" .. port)
   end)
+  LED.blink(500)
 end)
 wireless:connect(CONST.ssid, CONST.pass)

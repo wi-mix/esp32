@@ -29,9 +29,11 @@ end
 
 function LED.blink(ms)
   if ms < 50 then return end
+  if LED.duration == ms then return end
   LED.unblink()
+  LED.duration = ms
   LED.timer = tmr.create()
-  LED.timer:alarm(ms, tmr.ALARM_AUTO, function()
+  LED.timer:alarm(LED.duration, tmr.ALARM_AUTO, function()
     LED.value = 1 - LED.value
     LED.set()
   end)
@@ -41,5 +43,6 @@ function LED.unblink()
   if LED.timer then
     LED.timer:unregister()
     LED.timer = nil
+    LED.duration = nil
   end
 end
