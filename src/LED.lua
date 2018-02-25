@@ -29,6 +29,7 @@ end
 
 function LED.blink(ms)
   if ms < 50 then return end
+  LED.unblink()
   LED.timer = tmr.create()
   LED.timer:alarm(ms, tmr.ALARM_AUTO, function()
     LED.value = 1 - LED.value
