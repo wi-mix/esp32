@@ -4,6 +4,7 @@
 -- sb = SendBuffer.new()
 -- sb:send(client, string)
 -- sb:sent()
+-- sb:disconnect(client)
 
 SendBuffer = {}
 function SendBuffer.new()
@@ -11,6 +12,7 @@ function SendBuffer.new()
   setmetatable(_sendbuffer, {__index = SendBuffer})
   
   _sendbuffer.queue = Queue.new()
+  _sendbuffer.currentClient = nil
   
   return _sendbuffer
 end
@@ -25,7 +27,12 @@ end
 
 function SendBuffer:sent()
   self.canSend = true
+  self.currentClient = nil
   self:trySend()
+end
+
+function SendBuffer:disconnect(client)
+  if self.currentClient == client then self.sent() end
 end
 
 function SendBuffer:trySend()
@@ -33,6 +40,7 @@ function SendBuffer:trySend()
   if self.queue:isEmpty() then return end
   local entry = self.queue:pop()
   if entry.client.closed then return self:trySend() end
-  entry.client:send(entry.string)
   self.canSend = false
+  self.currentClient = entry.client
+  entry.client:send(entry.string)
 end

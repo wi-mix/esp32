@@ -12,18 +12,62 @@ FS.forEachFile(".lc", function(name)
   dofile(name)
 end)
 
+function wifiDisconnected(ssid, bssid, reason)
+  LED.blink(100)
+  print("-- Wifi disconnected: " .. reason)
+  if s then
+    s:close()
+    s = nil
+  end
+end
+
+function wifiGotIP(ip, netmask, gw)
+  LED.on()
+  print("-- Wifi got ip " .. ip .. ", mask: " .. netmask .. ", gateway: " .. gw)
+  if s then s:close() end
+  s = Server.new()
+  s:listen(CONST.port, serverOnConnect)
+  LED.blink(500)
+end
+
+function serverOnConnect(c)
+  c:onReceive(clientOnReceive)
+  c:onSent(clientOnSent)
+  c:onDisconnection(clientOnDisconnection)
+  local port, ip = c:address()
+  print("-- Client connected to " .. ip .. ":" .. port)
+  local port, ip = c:peerAddress()
+  print("-- Client connected from " .. ip .. ":" .. port)
+end
+
+function clientOnReceive(c, data)
+  print("-- Receive data: " .. data)
+  html[htmlIndex] = "HTML SERVER"
+  response = html:render()
+  CONST.httpResponse[CONST.httpIndex] = response
+  CONST.httpResponse[CONST.httpLength] = response:len()
+  sendBuffer:send(c, CONST.httpResponse:render())
+end
+
+function clientOnSent(client)
+  print("-- Done sending")
+  sendBuffer:sent()
+end
+
+function clientOnDisconnection(client, err)
+  print("-- Disconnected: " .. err)
+  sendBuffer:disconnect(client)
+end
+
+function uartOnData(data)
+  print("UART data: " .. data)
+  --u:write(data)
+  --sendQueue:append(value)
+  --value = sendQueue:pop()
+end
+
 LED.init()
 LED.off()
-
-contentIndex = 6
-contentLengthIndex = 4
-httpResponse = StringFormat.new()
-httpResponse[1] = "HTTP/1.1 200 OK\n"
-httpResponse[2] = "Content-Type: text/html\n"
-httpResponse[3] = "Content-Length: "
-httpResponse[4] = 0
-httpResponse[5] = "\n\n"
-httpResponse[6] = ""
 
 htmlIndex = 7
 html = StringFormat.new()
@@ -43,47 +87,9 @@ sendBuffer = SendBuffer.new()
 
 w = Wifi.init()
 s = nil
-w:onDisconnect(function(ssid, bssid, reason)
-  LED.blink(100)
-  print("-- Wifi disconnected: " .. reason)
-  if s then
-    s:close()
-    s = nil
-  end
-end)
-w:onGetIp(function(ip, netmask, gw)
-  LED.on()
-  print("-- Wifi got ip " .. ip .. ", mask: " .. netmask .. ", gateway: " .. gw)
-  if s then
-    s:close()
-  end
-  s = Server.new()
-  s:listen(CONST.port, function(c)
-    c:onReceive(function(c, data)
-      print("-- Receive data: " .. data)
-      html[htmlIndex] = "HTML SERVER"
-      response = html:render()
-      httpResponse[contentIndex] = response
-      httpResponse[contentLengthIndex] = response:len()
-      sendBuffer:send(c, httpResponse:render())
-    end)
-    c:onSent(function(client)
-      print("-- Done sending")
-      sendBuffer:sent()
-    end)
-    local port, ip = c:address()
-    print("-- Client connected to " .. ip .. ":" .. port)
-    local port, ip = c:peerAddress()
-    print("-- Client connected from " .. ip .. ":" .. port)
-  end)
-  LED.blink(500)
-end)
+w:onDisconnect(wifiDisconnected)
+w:onGetIp(wifiGotIP)
 w:connect(CONST.ssid, CONST.pass)
 
 u = UART.init(115200, 8, uart.PARITY_ODD, uart.STOPBITS_1)
-u:onData(function(data)
-  print("UART data: " .. data)
-  --u:write(data)
-  --sendQueue:append(value)
-  --value = sendQueue:pop()
-end)
+u:onData(uartOnData)
