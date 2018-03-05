@@ -2,6 +2,7 @@
 -- David Skrundz
 --
 -- q = Queue.new()
+-- q:isEmpty()
 -- q:append(value)
 -- value = q:pop()
 
