@@ -11,23 +11,23 @@ function UART.init(baud, bits, parity, stopBits)
   local _uart = {}
   setmetatable(_uart, {__index = UART})
 
-  uart.on("data", 0, function(data)
+  uart.on(1, "data", 0, function(data)
     if _uart.onDataFunc then
       _uart.onDataFunc(data)
     end
   end, 0)
-  uart.on("error", function(err)
+  uart.on(1, "error", function(err)
     if _uart.onErrorFunc then
       _uart.onErrorFunc(err)
     end
   end)
-  uart.setup(0, baud, bits, parity, stopBits, 0)
+  uart.setup(1, baud, bits, parity, stopBits, 0)
 
   return _uart
 end
 
 function UART:write(data)
-  uart.write(0, data)
+  uart.write(1, data)
 end
 
 function UART:onError(func)
