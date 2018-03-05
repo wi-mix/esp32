@@ -15,14 +15,10 @@ end)
 function wifiDisconnected(ssid, bssid, reason)
   LED.blink(100)
   print("-- Wifi disconnected: " .. reason)
-  if s then
-    s:close()
-    s = nil
-  end
+  if s then s:close(); s = nil end
 end
 
 function wifiGotIP(ip, netmask, gw)
-  LED.on()
   print("-- Wifi got ip " .. ip .. ", mask: " .. netmask .. ", gateway: " .. gw)
   if s then s:close() end
   s = Server.new()
@@ -61,13 +57,8 @@ end
 
 function uartOnData(data)
   print("UART data: " .. data)
-  --u:write(data)
-  --sendQueue:append(value)
-  --value = sendQueue:pop()
+  u:write(data)
 end
-
-LED.init()
-LED.off()
 
 htmlIndex = 7
 html = StringFormat.new()
@@ -83,10 +74,13 @@ html[ 9] = "</center>"
 html[10] = "</body>"
 html[11] = "</html>"
 
+LED.init()
+LED.off()
+
+s = nil
 sendBuffer = SendBuffer.new()
 
 w = Wifi.init()
-s = nil
 w:onDisconnect(wifiDisconnected)
 w:onGetIp(wifiGotIP)
 w:connect(CONST.ssid, CONST.pass)
