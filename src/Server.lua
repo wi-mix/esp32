@@ -18,7 +18,7 @@
 
 Client = {}
 function Client.new(connection)
-  local _client = {conn = connection}
+  local _client = {conn = connection, closed = false}
   setmetatable(_client, {__index = Client})
 
   _client.conn:on("connection", function(socket)
@@ -32,6 +32,7 @@ function Client.new(connection)
     end
   end)
   _client.conn:on("disconnection", function(socket, err)
+    _client.closed = true
     if _client.onDisconnectionFunc then
       _client.onDisconnectionFunc(_client, err)
     end
