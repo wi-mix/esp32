@@ -111,11 +111,6 @@ function onUARTDataReceived(data)
   u:write(data)
 end
 
-ingredients = {}
-ingredients[1] = {id = nil, name = nil, amount = 0}
-ingredients[2] = {id = nil, name = nil, amount = 0}
-ingredients[3] = {id = nil, name = nil, amount = 0}
-
 function getIngredients()
   return { ingredients = ingredients }
 end
@@ -127,6 +122,11 @@ function getLevels()
     ingredients[3].amount
   }}
 end
+
+ingredients = {}
+ingredients[1] = {id = nil, name = nil, amount = 0}
+ingredients[2] = {id = nil, name = nil, amount = 0}
+ingredients[3] = {id = nil, name = nil, amount = 0}
 
 LED.init()
 LED.off()
