@@ -8,12 +8,22 @@ function Test:start(name)
   print("----- " .. self.current .. " Tests -----")
 end
 
+function Test:assertNil(val, str)
+  if not self.current then error("Testing not started") end
+  print("Testing " .. str .. " is nil")
+  if val then
+    self.tests[self.current].failed = self.tests[self.current].failed + 1
+    self.tests[self.current].failures[self.tests[self.current].failed] = tostring(left) .. " (" .. str .. ") is not nil"
+  end
+  self.tests[self.current].count = self.tests[self.current].count + 1
+end
+
 function Test:assertEqual(left, right, str1, str2)
   if not self.current then error("Testing not started") end
   print("Testing " .. str1 .. " == " .. str2)
   if left ~= right then
     self.tests[self.current].failed = self.tests[self.current].failed + 1
-    self.tests[self.current].failures[self.tests[self.current].failed] = tostring(left) .. " is not equal to " .. tostring(right)
+    self.tests[self.current].failures[self.tests[self.current].failed] = tostring(left) .. " (" .. str1 .. ") is not equal to " .. tostring(right) .. " (" .. str2 .. ")"
   end
   self.tests[self.current].count = self.tests[self.current].count + 1
 end
@@ -23,7 +33,7 @@ function Test:assertTrue(val, str)
   print("Testing " .. str .. " is true")
   if val ~= true then
     self.tests[self.current].failed = self.tests[self.current].failed + 1
-    self.tests[self.current].failures[self.tests[self.current].failed] = tostring(val) .. " is not true"
+    self.tests[self.current].failures[self.tests[self.current].failed] = tostring(val) .. " (" .. str .. ") is not true"
   end
   self.tests[self.current].count = self.tests[self.current].count + 1
 end
@@ -33,7 +43,7 @@ function Test:assertFalse(val, str)
   print("Testing " .. str .. " is true")
   if val ~= false then
     self.tests[self.current].failed = self.tests[self.current].failed + 1
-    self.tests[self.current].failures[self.tests[self.current].failed] = tostring(val) .. " is not false"
+    self.tests[self.current].failures[self.tests[self.current].failed] = tostring(val) .. " (" .. str .. ") is not false"
   end
   self.tests[self.current].count = self.tests[self.current].count + 1
 end
