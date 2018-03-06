@@ -22,7 +22,7 @@ function onWifiGetIP(ip, netmask, gw)
   print("-- IP: " .. ip)
   if server then server:close() end
   server = Server.new()
-  s:listen(CONST.port, onServerConnectionReceived)
+  server:listen(CONST.port, onServerConnectionReceived)
   LED.blink(500)
 end
 
