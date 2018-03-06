@@ -16,12 +16,21 @@ CONST.ssid = ""
 CONST.pass = ""
 CONST.port = 80
 
-CONST.httpLength = 4
-CONST.httpIndex = 6
+CONST.http200 = "200 OK"
+CONST.http201 = "201 Created"
+CONST.http409 = "409 Conflict"
+
+CONST.http404Response = "HTTP/1.1 404 Not found\r\nContent-Type: application/json\r\nContent-Length: 13\r\n\r\n{\"error\":404}"
+
+CONST.httpStatus = 2
+CONST.httpLength = 6
+CONST.httpIndex = 8
 CONST.httpResponse = StringFormat.new()
-CONST.httpResponse[1] = "HTTP/1.1 200 OK\n"
-CONST.httpResponse[2] = "Content-Type: application/json\n"
-CONST.httpResponse[3] = "Content-Length: "
-CONST.httpResponse[4] = 0
-CONST.httpResponse[5] = "\n\n"
-CONST.httpResponse[6] = ""
+CONST.httpResponse[1] = "HTTP/1.1 "
+CONST.httpResponse[2] = ""
+CONST.httpResponse[3] = "\r\n"
+CONST.httpResponse[4] = "Content-Type: application/json\r\n"
+CONST.httpResponse[5] = "Content-Length: "
+CONST.httpResponse[6] = 0
+CONST.httpResponse[7] = "\r\n\r\n"
+CONST.httpResponse[8] = ""

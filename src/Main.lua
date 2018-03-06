@@ -46,23 +46,86 @@ function onClientDisconnect(client, err)
 end
 
 function onRequest(client, method, path, version, headers, body)
-  local responseList = {
-    method = method,
-    path = path,
-    version = version,
-    headers = headers,
-    body = body
-  }
-  local response = json.stringify(responseList)
+  if method == "GET" and path == "/ingredients" then
+    return onGETingredients(client, version, headers)
+  end
+  if method == "POST" and path == "/ingredients" then
+    return onPOSTingredients(client, version, headers, body)
+  end
+  if method == "POST" and path == "/dispense" then
+    return onPOSTdispense(client, version, headers, body)
+  end
+  sendBuffer:send(client, CONST.http404Response)
+end
+
+function onGETingredients(client, version, headers)
+  local response = json.stringify(getIngredients())
+  sendResponse(client, CONST.http200, response)
+end
+
+function onPOSTingredients(client, version, headers, body)
+  sendBuffer:send(client, CONST.http400Response)
+  setIngredients(json.parse(body))
+end
+
+function onPOSTdispense(client, version, headers, body)
+  local response = json.stringify(getLevels())
+  if startDispense(json.parse(body)) then
+    sendResponse(client, CONST.http201, response)
+  else
+    sendResponse(client, CONST.http409, response)
+  end
+end
+
+function sendResponse(client, status, response)
+  CONST.httpResponse[CONST.httpStatus] = status
   CONST.httpResponse[CONST.httpIndex] = response
   CONST.httpResponse[CONST.httpLength] = response:len()
   sendBuffer:send(client, CONST.httpResponse:render())
+end
+
+function setIngredients(object)
+  local newIngredients = object.ingredients
+  ingredients[1].id = newIngredients[1].id
+  ingredients[1].name = newIngredients[1].name
+  ingredients[2].id = newIngredients[2].id
+  ingredients[2].name = newIngredients[2].name
+  ingredients[3].id = newIngredients[3].id
+  ingredients[3].name = newIngredients[3].name
+end
+
+function startDispense(object)
+  if ingredients[1].amount >= object.ingredients[1] and
+     ingredients[2].amount >= object.ingredients[2] and
+     ingredients[3].amount >= object.ingredients[3] then
+    -- TODO: dispense
+    return true
+  else
+    return false
+  end
 end
 
 function onUARTDataReceived(data)
   -- Simple echo server
   print("UART data: " .. data)
   u:write(data)
+end
+
+ingredients = {}
+ingredients[1] = {id = nil, name = nil, amount = 0}
+ingredients[2] = {id = nil, name = nil, amount = 0}
+ingredients[3] = {id = nil, name = nil, amount = 0}
+
+function getIngredients()
+  return { ingredients = ingredients }
+end
+
+function getLevels()
+  return { ingredients = {
+    ingredients[1].amount,
+    ingredients[2].amount,
+    ingredients[3].amount
+  }}
 end
 
 LED.init()
