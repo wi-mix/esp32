@@ -1,4 +1,5 @@
 -- Public domain from: https://gist.github.com/tylerneylon/59f4bcf316be525b30ab
+-- Modified to work with the ESP32 by David Skrundz
 --
 -- json.lua
 --
@@ -44,7 +45,7 @@
 -- If you have control over the data and are using Lua, I would recommend just
 -- avoiding null values in your data to begin with.
 
-local json = {}
+json = {}
 
 
 -- Internal functions.
@@ -189,5 +190,3 @@ function json.parse(str, pos, end_delim)
     error('Invalid json syntax starting at ' .. pos_info_str)
   end
 end
-
-return json

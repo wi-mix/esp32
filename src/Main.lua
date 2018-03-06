@@ -46,10 +46,14 @@ function onClientDisconnect(client, err)
 end
 
 function onRequest(client, method, path, version, headers, body)
-  html[htmlTitleIndex] = "HTML SERVER - " .. path
-  html[htmlBodyIndex] = ""
-  if body then html[htmlBodyIndex] = body end
-  response = html:render()
+  local responseList = {
+    method = method,
+    path = path,
+    version = version,
+    headers = headers,
+    body = body
+  }
+  local response = json.stringify(responseList)
   CONST.httpResponse[CONST.httpIndex] = response
   CONST.httpResponse[CONST.httpLength] = response:len()
   sendBuffer:send(client, CONST.httpResponse:render())
@@ -60,25 +64,6 @@ function onUARTDataReceived(data)
   print("UART data: " .. data)
   u:write(data)
 end
-
-htmlTitleIndex = 7
-htmlBodyIndex = 12
-html = StringFormat.new()
-html[ 1] = "<html>"
-html[ 2] = "<head>"
-html[ 3] = "</head>"
-html[ 4] = "<body>"
-html[ 5] = "<center>"
-html[ 6] = "<h1>"
-html[ 7] = ""
-html[ 8] = "</h1>"
-html[ 9] = "</center>"
-html[10] = "<br/>"
-html[11] = "<p>"
-html[12] = ""
-html[13] = "</p>"
-html[14] = "</body>"
-html[15] = "</html>"
 
 LED.init()
 LED.off()
