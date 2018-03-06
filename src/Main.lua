@@ -12,55 +12,57 @@ FS.forEachFile(".lc", function(name)
   dofile(name)
 end)
 
-function wifiDisconnected(ssid, bssid, reason)
+function onWifiDisconnect(ssid, bssid, reason)
   LED.blink(100)
   print("-- Wifi disconnected: " .. reason)
-  if s then s:close(); s = nil end
+  if server then server:close(); server = nil end
 end
 
-function wifiGotIP(ip, netmask, gw)
-  print("-- Wifi got ip " .. ip .. ", mask: " .. netmask .. ", gateway: " .. gw)
-  if s then s:close() end
-  s = Server.new()
-  s:listen(CONST.port, serverOnConnect)
+function onWifiGetIP(ip, netmask, gw)
+  print("-- IP: " .. ip)
+  if server then server:close() end
+  server = Server.new()
+  s:listen(CONST.port, onServerConnectionReceived)
   LED.blink(500)
 end
 
-function serverOnConnect(c)
-  c:onReceive(clientOnReceive)
-  c:onSent(clientOnSent)
-  c:onDisconnection(clientOnDisconnection)
-  local port, ip = c:address()
-  print("-- Client connected to " .. ip .. ":" .. port)
-  local port, ip = c:peerAddress()
-  print("-- Client connected from " .. ip .. ":" .. port)
+function onServerConnectionReceived(client)
+  client:onReceive(onClientReceive)
+  client:onSent(onClientSent)
+  client:onDisconnection(onClientDisconnect)
 end
 
-function clientOnReceive(c, data)
-  print("-- Receive data: " .. data)
-  html[htmlIndex] = "HTML SERVER"
-  response = html:render()
-  CONST.httpResponse[CONST.httpIndex] = response
-  CONST.httpResponse[CONST.httpLength] = response:len()
-  sendBuffer:send(c, CONST.httpResponse:render())
+function onClientReceive(client, data)
+  requestBuffer:append(client, data)
 end
 
-function clientOnSent(client)
-  print("-- Done sending")
+function onClientSent(client)
   sendBuffer:sent()
 end
 
-function clientOnDisconnection(client, err)
-  print("-- Disconnected: " .. err)
+function onClientDisconnect(client, err)
+  requestBuffer:drop(client)
   sendBuffer:disconnect(client)
 end
 
-function uartOnData(data)
+function onRequest(client, method, path, version, headers, body)
+  html[htmlTitleIndex] = "HTML SERVER - " .. path
+  html[htmlBodyIndex] = ""
+  if body then html[htmlBodyIndex] = body end
+  response = html:render()
+  CONST.httpResponse[CONST.httpIndex] = response
+  CONST.httpResponse[CONST.httpLength] = response:len()
+  sendBuffer:send(client, CONST.httpResponse:render())
+end
+
+function onUARTDataReceived(data)
+  -- Simple echo server
   print("UART data: " .. data)
   u:write(data)
 end
 
-htmlIndex = 7
+htmlTitleIndex = 7
+htmlBodyIndex = 12
 html = StringFormat.new()
 html[ 1] = "<html>"
 html[ 2] = "<head>"
@@ -71,19 +73,26 @@ html[ 6] = "<h1>"
 html[ 7] = ""
 html[ 8] = "</h1>"
 html[ 9] = "</center>"
-html[10] = "</body>"
-html[11] = "</html>"
+html[10] = "<br/>"
+html[11] = "<p>"
+html[12] = ""
+html[13] = "</p>"
+html[14] = "</body>"
+html[15] = "</html>"
 
 LED.init()
 LED.off()
 
-s = nil
+server = nil
 sendBuffer = SendBuffer.new()
 
+requestBuffer = RequestBuffer.new()
+requestBuffer:onRequest(onRequest)
+
 w = Wifi.init()
-w:onDisconnect(wifiDisconnected)
-w:onGetIp(wifiGotIP)
+w:onDisconnect(onWifiDisconnect)
+w:onGetIp(onWifiGetIP)
 w:connect(CONST.ssid, CONST.pass)
 
 u = UART.init(115200, 8, uart.PARITY_ODD, uart.STOPBITS_1)
-u:onData(uartOnData)
+u:onData(onUARTDataReceived)

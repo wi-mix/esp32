@@ -21,7 +21,7 @@ end
 
 function Queue:pop()
   local first = self.first
-  if self:isEmpty() then error("empty queue") end
+  if self:isEmpty() then return nil end
   local value = self[first]
   self[first] = nil
   self.first = first + 1
