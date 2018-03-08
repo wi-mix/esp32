@@ -64,7 +64,7 @@ function onGETingredients(client, version, headers)
 end
 
 function onPOSTingredients(client, version, headers, body)
-  sendBuffer:send(client, CONST.http400Response)
+  sendResponse(client, CONST.http200, "")
   setIngredients(json.parse(body))
 end
 
@@ -95,6 +95,7 @@ function setIngredients(object)
 end
 
 function startDispense(object)
+  -- TODO: Check in use
   if ingredients[1].amount >= object.ingredients[1] and
      ingredients[2].amount >= object.ingredients[2] and
      ingredients[3].amount >= object.ingredients[3] then
