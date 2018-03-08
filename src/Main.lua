@@ -106,10 +106,10 @@ function startDispense(object)
   end
 end
 
-function onUARTDataReceived(data)
+function onI2CData(data)
   -- Simple echo server
-  print("UART data: " .. data)
-  u:write(data)
+  print("I2C data: " .. data)
+  i:write(data)
 end
 
 function getIngredients()
@@ -143,5 +143,5 @@ w:onDisconnect(onWifiDisconnect)
 w:onGetIp(onWifiGetIP)
 w:connect(CONST.ssid, CONST.pass)
 
-u = UART.init(115200, 8, uart.PARITY_ODD, uart.STOPBITS_1)
-u:onData(onUARTDataReceived)
+i = I2C.init(2, 4, 1, false, 100, 100)
+i:onData(onI2CData)
