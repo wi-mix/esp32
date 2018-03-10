@@ -54,7 +54,7 @@ function RequestBuffer:processHeaders(client)
   header = header .. "\r\n"
   for key, value in header:gmatch("([%S]+): ([%S ]+)\r\n") do
     if key then
-      self.buffers[client].headers[key] = value
+      self.buffers[client].headers[key:lower()] = value
     end
   end
   
