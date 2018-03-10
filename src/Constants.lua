@@ -12,8 +12,8 @@
 dofile("StringFormat.lc")
 
 CONST = {}
-CONST.ssid = ""
-CONST.pass = ""
+CONST.ssid = "ManInTheVan"
+CONST.pass = "vanmancanwan"
 CONST.port = 80
 
 CONST.http200 = "200 OK"
@@ -34,3 +34,7 @@ CONST.httpResponse[5] = "Content-Length: "
 CONST.httpResponse[6] = 0
 CONST.httpResponse[7] = "\r\n\r\n"
 CONST.httpResponse[8] = ""
+
+CONST.wiREAD_LEVEL   = 0
+CONST.wiDISPENSE_REQ = 1
+CONST.wiDISPENSE     = 2
