@@ -16,6 +16,8 @@ CONST.ssid = "ManInTheVan"
 CONST.pass = "vanmancanwan"
 CONST.port = 80
 
+CONST.save = "Ingredients.sav"
+
 CONST.http200 = "200 OK"
 CONST.http201 = "201 Created"
 CONST.http409 = "409 Conflict"

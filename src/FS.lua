@@ -4,6 +4,8 @@
 -- FS.forEachFile("lua", function(name) print(name) end)
 -- FS.deleteAll()
 -- FS.cleanup()
+-- data = FS.read(file)
+-- FS.write(file, data)
 
 FS = {}
 function FS.forEachFile(extension, callback)
@@ -28,6 +30,22 @@ function FS.cleanup()
     file.remove(name)
   end)
   file.remove("init.lc")
+end
+
+function FS.read(fileName)
+  if file.open(fileName, "r") then
+    local str = file.read()
+    file.close()
+    return str
+  end
+  return nil
+end
+
+function FS.write(fileName, data)
+  if file.open(fileName, "w+") then
+    file.write(data)
+    file.close()
+  end
 end
 
 function stringHasSuffix(self, suffix)

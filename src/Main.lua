@@ -92,6 +92,7 @@ function setIngredients(object)
   ingredients[2].name = newIngredients[2].name
   ingredients[3].id = newIngredients[3].id
   ingredients[3].name = newIngredients[3].name
+  FS.write(CONST.save, json.stringify(ingredients))
 end
 
 function startDispense(object)
@@ -125,9 +126,14 @@ function getLevels()
 end
 
 ingredients = {}
-ingredients[1] = {id = nil, name = nil, amount = 0}
-ingredients[2] = {id = nil, name = nil, amount = 0}
-ingredients[3] = {id = nil, name = nil, amount = 0}
+ingredients[1] = {id = nil, name = nil, amount = 100}
+ingredients[2] = {id = nil, name = nil, amount = 200}
+ingredients[3] = {id = nil, name = nil, amount = 300}
+
+ingredientsString = FS.read(CONST.save)
+if ingredientsString then
+  ingredients = json.parse(ingredientsString)
+end
 
 LED.init()
 LED.off()
