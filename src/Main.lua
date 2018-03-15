@@ -135,12 +135,6 @@ function startDispense(object)
   end
 end
 
-function onI2CData(data)
-  -- Simple echo server
-  print("I2C data: " .. data)
-  i:write(data)
-end
-
 function getIngredients()
   return { ingredients = ingredients }
 end
@@ -181,5 +175,4 @@ w:onDisconnect(onWifiDisconnect)
 w:onGetIp(onWifiGetIP)
 w:connect(CONST.ssid, CONST.pass)
 
-i = I2C.init(2, 4, 1, false, 100, 100)
-i:onData(onI2CData)
+i = I2C.init(21, 22, i2c.SLOW)

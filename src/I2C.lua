@@ -1,46 +1,47 @@
 -- I2C.lua
 -- David Skrundz
 --
--- i = I2C.init(dataSignal, clockSignal, address, tenBit, rxBufLen, txBufLen)
--- i:onData(function(data) ... end)
--- i:onError(function(error) ... end)
+-- i = I2C.init(dataSignal, clockSignal, speed)
+-- i:start()
+-- i:address(address, i2c.TRANSMITTER)
 -- i:write(data)
+-- i:stop()
+-- i:start()
+-- i:address(address, i2c.RECEIVER)
+-- i:read(length)
+-- i:stop()
+-- i:transfer(function(data, ack) ... end)
 
 I2C = {}
-function I2C.init(dataSignal, clockSignal, address, tenBit, rxBufLen, txBufLen)
+function I2C.init(dataSignal, clockSignal, speed)
   local _i2c = {}
   setmetatable(_i2c, {__index = I2C})
   
-  i2c.slave.on(i2c.HW0, "receive", function(err, data)
-    if err and _i2c.onErrorFunc then
-      _i2c.onErrorFunc(err)
-    end
-    if data and _i2c.onDataFunc then
-      _i2c.onDataFunc(data)
-    end
-  end)
-  
-  local i2cConfig = {
-    sda = dataSignal,
-    scl = clockSignal,
-    addr = address,
-    rxbuf_len = rxBufLen,
-    txbuf_len = txBufLen
-  }
-  i2cConfig["10bit"] = tenBit
-  i2c.slave.setup(i2c.HW0, i2cConfig)
+  i2c.setup(i2c.HW0, dataSignal, clockSignal, speed)
   
   return _i2c
 end
 
+function I2C:start()
+  i2c.start(i2c.HW0)
+end
+
+function I2C:address(addr, send_recv)
+  i2c.address(i2c.HW0, addr, send_recv, true)
+end
+
+function I2C:read(length)
+  i2c.read(i2c.HW0, length)
+end
+
 function I2C:write(data)
-  i2c.slave.send(i2c.HW0, data)
+  i2c.write(i2c.HW0, data, true)
 end
 
-function I2C:onData(func)
-  self.onDataFunc = func
+function I2C:stop()
+  i2c.stop(i2c.HW0)
 end
 
-function I2C:onError(func)
-  self.onErrorFunc = func
+function I2C:transfer(func)
+  i2c.transfer(i2c.HW0, func, 0)
 end
