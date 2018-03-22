@@ -15,7 +15,6 @@ end)
 function onWifiDisconnect(ssid, bssid, reason)
   LED.blink(100)
   stopUDPBroadcast()
-  print("-- Wifi disconnected: " .. reason)
   if server then server:close(); server = nil end
 end
 
@@ -29,29 +28,13 @@ function onWifiGetIP(ip, netmask, gw)
 end
 
 function startUDPBroadcast(ip)
-  local broadcastIP, _ = ip:gsub("(%d+)$", "255")
-  local ipMessage = "g5:" .. ip
-  
-  udpSocketTimer = tmr.create()
-  udpSocketCanSend = true
-  udpSocket = net.createUDPSocket()
-  
-  udpSocket:on("sent", function(socket)
-    udpSocketCanSend = true
-  end)
-  
-  udpSocketTimer:alarm(CONST.udpINTERVAL, tmr.ALARM_AUTO, function()
-    if udpSocketCanSend then
-      udpSocket:send(CONST.udpPORT, broadcastIP, ipMessage)
-    end
-  end)
+  local targetIP, _ = ip:gsub("(%d+)$", "255")
+  local message = "g5:" .. ip
+  udpCaster:start(targetIP, CONST.udpPORT, message, CONST.udpINTERVAL)
 end
 
 function stopUDPBroadcast()
-  if udpSocketTimer then
-    udpSocketTimer:unregister()
-    udpSocketTimer = nil
-  end
+  udpCaster:stop()
 end
 
 function onServerConnectionReceived(client)
@@ -157,9 +140,7 @@ end
 LED.init()
 LED.off()
 
-udpSocketTimer = nil
-udpSocketCanSend = true
-udpSocket = nil
+udpCaster = UDPBroadcaster.new()
 
 server = nil
 sendBuffer = SendBuffer.new()
