@@ -32,7 +32,7 @@ function UDPBroadcaster:start(ip, port, message, interval)
 end
 
 function UDPBroadcaster:stop()
-  if self:isBroadcasting() then return end
+  if not self:isBroadcasting() then return end
   self.timer:unregister()
   self.timer = nil
   self.canSend = nil
