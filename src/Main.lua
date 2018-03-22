@@ -112,27 +112,24 @@ function sendResponse(client, status, response)
   sendBuffer:send(client, CONST.httpResponse:render())
 end
 
-function setIngredients(object)
-  local newIngredients = object.ingredients
-  ingredients[1].id = newIngredients[1].id
-  ingredients[1].name = newIngredients[1].name
-  ingredients[2].id = newIngredients[2].id
-  ingredients[2].name = newIngredients[2].name
-  ingredients[3].id = newIngredients[3].id
-  ingredients[3].name = newIngredients[3].name
+function setIngredients(newIngredients)
+  for index,value in ipairs(newIngredients) do
+    ingredients[index].key = value.key
+    ingredients[index].name = value.name
+  end
   FS.write(CONST.save, json.stringify(ingredients))
 end
 
 function startDispense(object)
   -- TODO: Check in use
-  if ingredients[1].amount >= object.ingredients[1] and
-     ingredients[2].amount >= object.ingredients[2] and
-     ingredients[3].amount >= object.ingredients[3] then
-    -- TODO: dispense
-    return true
-  else
-    return false
+  if not object.ingredients then return false end
+  for index, value in ipairs(object.ingredients) do
+    if value.amount > ingredients[index].amount then
+      return false
+    end
   end
+  -- TODO: dispense
+  return true
 end
 
 function getIngredients()
@@ -148,9 +145,9 @@ function getLevels()
 end
 
 ingredients = {}
-ingredients[1] = {id = nil, name = nil, amount = 100}
-ingredients[2] = {id = nil, name = nil, amount = 200}
-ingredients[3] = {id = nil, name = nil, amount = 300}
+ingredients[1] = {key = nil, name = nil, amount = 100}
+ingredients[2] = {key = nil, name = nil, amount = 200}
+ingredients[3] = {key = nil, name = nil, amount = 300}
 
 ingredientsString = FS.read(CONST.save)
 if ingredientsString then
