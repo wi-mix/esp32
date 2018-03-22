@@ -20,6 +20,7 @@ CONST.save = "Ingredients.sav"
 
 CONST.http200 = "200 OK"
 CONST.http201 = "201 Created"
+CONST.http400 = "400 Bad Request"
 CONST.http409 = "409 Conflict"
 
 CONST.http404Response = "HTTP/1.1 404 Not found\r\nContent-Type: application/json\r\nContent-Length: 13\r\n\r\n{\"error\":404}"

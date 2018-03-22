@@ -75,8 +75,13 @@ function onGETingredients(client, version, headers)
 end
 
 function onPOSTingredients(client, version, headers, body)
+  local object = json.parse(body)
+  if not object.ingredients then
+    sendResponse(client, CONST.http400, "")
+    return
+  end
+  setIngredients(object.ingredients)
   sendResponse(client, CONST.http200, "")
-  setIngredients(json.parse(body))
 end
 
 function onPOSTdispense(client, version, headers, body)
