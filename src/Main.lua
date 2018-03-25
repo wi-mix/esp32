@@ -150,6 +150,9 @@ udpCaster = UDPBroadcaster.new()
 server = nil
 sendBuffer = SendBuffer.new()
 
+i = I2C.init(21, 22, i2c.SLOW/2)
+i2cBuffer = I2CBuffer.new(i)
+
 requestBuffer = RequestBuffer.new()
 requestBuffer:onRequest(onRequest)
 
@@ -157,5 +160,3 @@ w = Wifi.init()
 w:onDisconnect(onWifiDisconnect)
 w:onGetIp(onWifiGetIP)
 w:connect(CONST.ssid, CONST.pass)
-
-i = I2C.init(21, 22, i2c.SLOW)
