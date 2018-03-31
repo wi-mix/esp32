@@ -33,5 +33,6 @@ function I2CBuffer:trySend()
   self.i2c:transfer(function(data, ack)
     self.canSend = true
     entry.call(entry.data, data, ack)
+    self:trySend()
   end)
 end

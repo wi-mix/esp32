@@ -14,34 +14,31 @@ end)
 
 function setIngredients(newIngredients)
   for index,value in ipairs(newIngredients) do
+    if not ingredients[index] then
+      ingredients[index] = {}
+    end
     ingredients[index].key = value.key
     ingredients[index].name = value.name
   end
   FS.write(CONST.save, json.stringify(ingredients))
 end
 
-function startDispense(object)
-  -- TODO: Check in use
-  if not object.ingredients then return false end
-  for index, value in ipairs(object.ingredients) do
-    if value.amount > ingredients[index].amount then
-      return false
+function getIngredients(callback)
+  getLevels(function(levels)
+    for i,v in ipairs(levels) do
+      if not ingredients[i] then
+        ingredients[i] = {}
+      end
+      ingredients[i].amount = v
     end
-  end
-  -- TODO: dispense
-  return true
+    callback({ ingredients = ingredients })
+  end)
 end
 
-function getIngredients()
-  return { ingredients = ingredients }
-end
-
-function getLevels()
-  local levels = {}
-  for i,v in ipairs(ingredients) do
-    levels[i] = v.amount
-  end
-  return levels
+function getLevels(callback)
+  requestLevels(function(levels)
+    callback(levels)
+  end)
 end
 
 ingredients = {}

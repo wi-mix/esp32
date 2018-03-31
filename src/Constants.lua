@@ -44,3 +44,7 @@ CONST.wiDISPENSE     = 2
 
 CONST.udpPORT = 12345
 CONST.udpINTERVAL = 1000
+
+CONST.i2cAddress = 17
+CONST.i2cRequestLevels = 0
+CONST.i2cDispense = 1
