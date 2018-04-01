@@ -4,6 +4,7 @@
 -- dofile("Main.lc")
 
 -- load all modules
+struct = require("struct")
 dofile("FS.lc")
 FS.forEachFile(".lc", function(name)
   if name == "init.lc" then return end
@@ -37,6 +38,12 @@ end
 
 function getLevels(callback)
   requestLevels(function(levels)
+    for i,v in ipairs(levels) do
+      if not ingredients[i] then
+        ingredients[i] = {}
+      end
+      ingredients[i].amount = v
+    end
     callback(levels)
   end)
 end

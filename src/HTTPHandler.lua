@@ -32,9 +32,13 @@ function onPOSTingredients(client, version, headers, body)
 end
 
 function onPOSTdispense(client, version, headers, body)
+  print("GOT")
   getLevels(function(levels)
+    print("LEVELS")
     local response = json.stringify(levels)
+    print(response)
     startDispense(json.parse(body), function(success)
+      print("SUCC: " .. tostring(success))
       if success then
         sendResponse(client, CONST.http201, response)
       else

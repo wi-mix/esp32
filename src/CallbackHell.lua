@@ -3,6 +3,7 @@
 
 function writeFactory(address, bytes)
   return function(i)
+    print("Writing")
     i:start()
     i:address(address, i2c.TRANSMITTER)
     i:write(bytes)
@@ -12,6 +13,7 @@ end
 
 function readFactory(address, size)
   return function(i)
+    print("Reading")
     i:start()
     i:address(address, i2c.RECEIVER)
     i:read(size)
@@ -36,10 +38,16 @@ dispenseBusy = false
 function startDispense(object, callback)
   if dispenseBusy then return callback(false) end
   if not object or not object.ingredients then
+    print("MISSING OBJECT")
     return callback(false)
   end
   for index, value in ipairs(object.ingredients) do
     if value.amount > ingredients[index].amount then
+      print("BAD: ")
+      for index, value in ipairs(object.ingredients) do
+        print(index)
+        print(value.amount)
+      end
       return callback(false)
     end
   end
@@ -50,9 +58,12 @@ function startDispense(object, callback)
   i2cBuffer:append(
     readFactory(CONST.i2cAddress, 1),
     nil,
-    function(_, data, _) 
-      -- TODO: Process data for 1 or 0
+    function(_, data, _)
+      local ready, _ = struct.unpack(">I1", data)
+      print("READY " .. tostring(ready))
+      if ready == 0 then return callback(false) end
       i2cBuffer:append(
+        -- TODO: SEND REAL DATA
         writeFactory(CONST.i2cAddress, CONST.i2cDispense),
         nil,
         function(_, data, _)

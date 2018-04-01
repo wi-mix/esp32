@@ -11,6 +11,11 @@ function I2CBuffer.new(i2cObj)
   
   _i2cbuffer.i2c = i2cObj
   _i2cbuffer.queue = Queue.new()
+  _i2cbuffer.timer = tmr.create()
+  _i2cbuffer.timer:alarm(CONST.i2cINTERVAL, tmr.ALARM_AUTO, function()
+    if not _i2cbuffer.canSend then return end
+    _i2cbuffer:trySend()
+  end)
   
   return _i2cbuffer
 end
@@ -33,6 +38,5 @@ function I2CBuffer:trySend()
   self.i2c:transfer(function(data, ack)
     self.canSend = true
     entry.call(entry.data, data, ack)
-    self:trySend()
   end)
 end
