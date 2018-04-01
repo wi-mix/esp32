@@ -26,12 +26,6 @@ end
 
 function getIngredients(callback)
   getLevels(function(levels)
-    for i,v in ipairs(levels) do
-      if not ingredients[i] then
-        ingredients[i] = {}
-      end
-      ingredients[i].amount = v
-    end
     callback({ ingredients = ingredients })
   end)
 end

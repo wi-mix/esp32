@@ -15,6 +15,7 @@ function onRequest(client, method, path, version, headers, body)
 end
 
 function onGETingredients(client, version, headers)
+  print("GET")
   getIngredients(function(ingredients)
     local response = json.stringify(ingredients)
     sendResponse(client, CONST.http200, response)

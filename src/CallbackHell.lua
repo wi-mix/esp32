@@ -34,9 +34,7 @@ function requestLevels(callback)
     end)
 end
 
-dispenseBusy = false
 function startDispense(object, callback)
-  if dispenseBusy then return callback(false) end
   if not object or not object.ingredients then
     print("MISSING OBJECT")
     return callback(false)
@@ -51,7 +49,6 @@ function startDispense(object, callback)
       return callback(false)
     end
   end
-  dispenseBusy = true
   i2cBuffer:append(
     writeFactory(CONST.i2cAddress, CONST.i2cDispense),
     nil, function(_, _, _) end)
@@ -62,13 +59,28 @@ function startDispense(object, callback)
       local ready, _ = struct.unpack(">I1", data)
       print("READY " .. tostring(ready))
       if ready == 0 then return callback(false) end
+      local toSend = {
+        {amount = 0, order = 0},
+        {amount = 0, order = 0},
+        {amount = 0, order = 0},
+      }
+      local ordered = 0
+      for index, value in ipairs(object.ingredients) do
+        toSend[index].amount = value.amount
+        toSend[index].order = value.order
+        if value.order > 0 then ordered = 1 end
+      end
+      print("Ordered: " .. ordered)
       i2cBuffer:append(
-        -- TODO: SEND REAL DATA
-        writeFactory(CONST.i2cAddress, CONST.i2cDispense),
+        writeFactory(CONST.i2cAddress,
+          struct.pack("<!2I2I1I2I1I2I1I1I1",
+            toSend[1].amount, toSend[1].order,
+            toSend[2].amount, toSend[2].order,
+            toSend[3].amount, toSend[3].order,
+            ordered, ordered)),
         nil,
-        function(_, data, _)
-          -- TODO: Process data and send it to callback
-          callback({})
+        function(_, _, _)
+          callback(true)
         end)
     end)
 end
