@@ -42,7 +42,7 @@ function getLevels(callback)
   end)
 end
 
-ingredients = {}
+ingredients = {{amount = 0},{amount = 0},{amount = 0}}
 
 ingredientsString = FS.read(CONST.save)
 if ingredientsString then
