@@ -20,12 +20,17 @@ function setIngredients(newIngredients)
     end
     ingredients[index].key = value.key
     ingredients[index].name = value.name
+    ingredients[index].amount = 0
   end
   FS.write(CONST.save, json.stringify(ingredients))
 end
 
 function getIngredients(callback)
   getLevels(function(levels)
+    if not callback then
+      print("Missing callback")
+      return
+    end
     callback({ ingredients = ingredients })
   end)
 end

@@ -17,7 +17,9 @@ end
 function onGETingredients(client, version, headers)
   print("GET")
   getIngredients(function(ingredients)
+    print("before json")
     local response = json.stringify(ingredients)
+    print("after json")
     sendResponse(client, CONST.http200, response)
   end)
 end

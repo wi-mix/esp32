@@ -38,10 +38,6 @@ CONST.httpResponse[6] = 0
 CONST.httpResponse[7] = "\r\n\r\n"
 CONST.httpResponse[8] = ""
 
-CONST.wiREAD_LEVEL   = 0
-CONST.wiDISPENSE_REQ = 1
-CONST.wiDISPENSE     = 2
-
 CONST.udpPORT = 12345
 CONST.udpINTERVAL = 500
 

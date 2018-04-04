@@ -3,7 +3,13 @@
 
 function writeFactory(address, bytes)
   return function(i)
-    print("Writing")
+    if type(bytes) == "string" then
+      print("Writing " .. bytes:gsub('.', function (c)
+        return string.format('%02X ', string.byte(c))
+      end))
+    else
+      print("Writing " .. bytes)
+    end
     i:start()
     i:address(address, i2c.TRANSMITTER)
     i:write(bytes)
@@ -13,7 +19,7 @@ end
 
 function readFactory(address, size)
   return function(i)
-    print("Reading")
+    print("Reading " .. size .. " bytes")
     i:start()
     i:address(address, i2c.RECEIVER)
     i:read(size)
@@ -58,7 +64,7 @@ function startDispense(object, callback)
     function(_, data, _)
       local ready, _ = struct.unpack(">I1", data)
       print("READY " .. tostring(ready))
-      if ready == 0 then return callback(false) end
+      if ready ~= 1 then return callback(false) end
       local toSend = {
         {amount = 0, order = 0},
         {amount = 0, order = 0},
@@ -73,14 +79,14 @@ function startDispense(object, callback)
       print("Ordered: " .. ordered)
       i2cBuffer:append(
         writeFactory(CONST.i2cAddress,
-          struct.pack("<!2I2I1I2I1I2I1I1I1",
+          struct.pack("<I2I2I2I2I2I2I2",
             toSend[1].amount, toSend[1].order,
             toSend[2].amount, toSend[2].order,
             toSend[3].amount, toSend[3].order,
-            ordered, ordered)),
+            ordered)),
         nil,
-        function(_, _, _)
-          callback(true)
+        function(_, _, ack)
+          callback(ack)
         end)
     end)
 end
