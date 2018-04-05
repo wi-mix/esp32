@@ -27,15 +27,12 @@ end
 
 function getIngredients(callback)
   getLevels(function(levels)
-    if not callback then
-      print("Missing callback")
-      return
-    end
     callback({ ingredients = ingredients })
   end)
 end
 
 function getLevels(callback)
+  print("getLevels")
   requestLevels(function(levels)
     for i,v in ipairs(levels) do
       if not ingredients[i] then
@@ -43,6 +40,7 @@ function getLevels(callback)
       end
       ingredients[i].amount = v
     end
+    print("callback(levels)")
     callback(levels)
   end)
 end
