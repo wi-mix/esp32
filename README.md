@@ -59,11 +59,17 @@ make flash
 
 - [http://chilipeppr.com/esp32](http://chilipeppr.com/esp32)
 
-Run the local json server and connect to it in the IDE
+Run the json server
 
 ```Bash
 ./serial-port-json-server
 ```
+
+Connect to the json server by refreshing
+![Connect to server](images/Connect1.png)
+
+Connect to the ESP32 by checking the correct box
+![Connect to server](images/Connect2.png)
 
 # Notes
 
