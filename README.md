@@ -69,4 +69,4 @@ Run the local json server and connect to it in the IDE
 
 - All code in chilipeppr is save to local storage, and needs to be manually copied to files for source control.
 - Chilipeppr uploads the files one line at a time using Lua's multiline string literal (`[[ ... ]]`), which means you cannot use it in your code.
-- If the board is constantly crashing, it needs to be wiped ([Erasing the Flash](#2.-Erasing-the-Flash))
+- If the board is constantly crashing, it needs to be wiped ([Erasing the Flash](#2-erasing-the-flash))
